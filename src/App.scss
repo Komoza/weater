@@ -6,6 +6,10 @@
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
 }
+
+.blur {
+  background-color: rgba($color: #000000, $alpha: .5);
+}
 .App {
     background-color: #1ABAFA;
 }

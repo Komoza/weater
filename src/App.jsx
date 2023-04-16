@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import moment from "moment";
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
-
+  const [country, setCountry] = useState("");
   const searchComponent = () => {
     return (
       <div className="search">
@@ -36,19 +37,6 @@ function App() {
     }
   };
 
-  const renderWeatherWindow = (weatherData) => {
-    if (!weatherData) {
-      return null;
-    }
-    return (
-      <div className="weather">
-        <h1 className="weather__name">{weatherData.name}</h1>
-        <p>Temperature: {Math.floor(weatherData.main.temp - 273.15)}°C</p>
-        <p>Humidity: {weatherData.main.humidity}%</p>
-      </div>
-    );
-  };
-
   const getWeather = (lat, lon) => {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=cf47b4e8a7ac7b9a03be3f7e94b5d2b3`;
 
@@ -56,14 +44,77 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setWeatherData(data);
+        setActive(true);
       });
+    const geonamesURL = `http://api.geonames.org/countryCodeJSON?lat=${lat}&lng=${lon}&username=komoza`;
+
+    fetch(geonamesURL)
+      .then((response) => response.json())
+      .then((dataCountry) => {
+        setCountry(dataCountry.countryName);
+      });
+  };
+
+  const [modalActive, setActive] = useState(false);
+  const closeModal = () => {
+    setActive(false);
+    setCountry("");
+  };
+
+  const Modal = (active, setActive) => {
+    if (!weatherData) {
+      return null;
+    }
+    const now = moment();
+
+    setTimeout(() => {
+      document.querySelector(".modal").classList.add("show");
+    }, 500);
+
+    return (
+      <div className="modal">
+        <div className="close" onClick={closeModal}>
+          <img
+            className="close__image"
+            src="./src/image/close.svg"
+            alt="close"
+          />
+        </div>
+        <div className="weather">
+          <div className="weather__top">
+            <div className="weather__date">
+              <div className="weather__time">{now.format("h:mm A")}</div>
+              <div className="weather__date-today">
+                {now.format("dddd, D MMMM, YYYY")}
+              </div>
+            </div>
+            <div className="weather__position">
+              <div className="weather__town">{weatherData.name}</div>
+              <div className="weather__country">{country}</div>
+            </div>
+          </div>
+
+          <div className="weather__bot">
+            <div className="weather__now">
+              {Math.floor(weatherData.main.temp - 273.15)}°
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="App">
-      <div className="container">
+      <div className={`container ${modalActive ? "blur" : ""}`}>
         {searchComponent()}
-        {renderWeatherWindow(weatherData)}
+        {modalActive && (
+          <Modal
+            active={modalActive}
+            setActive={setActive}
+            weatherData={weatherData}
+          />
+        )}
       </div>
     </div>
   );
