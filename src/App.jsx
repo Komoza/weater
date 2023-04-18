@@ -1,29 +1,55 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import moment from "moment";
+import { debounce } from "lodash";
 
 function App() {
+  // State
   const [weatherData, setWeatherData] = useState(null);
   const [country, setCountry] = useState("");
+  const [tips, setTips] = useState(null);
+  const [modalActive, setActive] = useState(false);
+  const [preloader, setPreloader] = useState(false);
+
+  const showPreloader = () =>
+    preloader && <img src="./image/preloader.gif" alt="loading" />;
+
   const searchComponent = () => {
     return (
-      <div className="search">
-        <div className="search__left">
-          <h1 className="search__text">Check the weather in your city</h1>
-          <input
-            className="search__input"
-            placeholder="Search city"
-            onKeyDown={handleInputKeyDown}
+      !preloader && (
+        <div className="search">
+          <div className="search__left">
+            <h1 className="search__text">Check the weather in your city</h1>
+            <div className="search-box">
+              <input
+                className={`search__input ${tips ? "--top-border" : ""}`}
+                placeholder="Search city"
+                onKeyUp={handleInputKeyUp}
+              />
+              {tips}
+            </div>
+          </div>
+          <img
+            className="search__image"
+            src="./src/image/cloud.svg"
+            alt="logo"
           />
         </div>
-        <img className="search__image" src="./src/image/cloud.svg" alt="logo" />
-      </div>
+      )
     );
   };
 
-  const handleInputKeyDown = (event) => {
+  const handleOptionClick = (event) => {
+    setPreloader(true);
+    const lat = event.target.getAttribute("data-lat");
+    const lon = event.target.getAttribute("data-lon");
+    getWeather(lat, lon);
+  };
+
+  const handleInputKeyUp = debounce((event) => {
     const town = event.target.value;
     if (event.code === "Enter" && town !== "") {
+      setPreloader(true)
       const url = `http://api.openweathermap.org/geo/1.0/direct?q=${town}&limit=5&appid=cf47b4e8a7ac7b9a03be3f7e94b5d2b3`;
 
       fetch(url)
@@ -35,7 +61,34 @@ function App() {
           }
         });
     }
-  };
+    if (event.target.value.length > 0) {
+      const urlTips = `http://api.openweathermap.org/geo/1.0/direct?q=${event.target.value}&limit=5&appid=cf47b4e8a7ac7b9a03be3f7e94b5d2b3`;
+      fetch(urlTips)
+        .then((response) => response.json())
+        .then((data) => {
+          const liItems = data.map((item, index) => {
+            return (
+              <li
+                key={index}
+                className="search__option"
+                onClick={handleOptionClick}
+                data-lat={item.lat}
+                data-lon={item.lon}
+              >{`${item.name} ${item.state ? "- " + item.state : ""} - ${
+                item.country
+              }`}</li>
+            );
+          });
+          if (liItems.length === 0) {
+            setTips(null);
+          } else {
+            setTips(liItems);
+          }
+        });
+    } else {
+      setTips(null);
+    }
+  }, 500);
 
   const getWeather = (lat, lon) => {
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=cf47b4e8a7ac7b9a03be3f7e94b5d2b3`;
@@ -44,24 +97,25 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setWeatherData(data);
-        setActive(true);
       });
-    const geonamesURL = `http://api.geonames.org/countryCodeJSON?lat=${lat}&lng=${lon}&username=komoza`;
 
+    const geonamesURL = `http://api.geonames.org/countryCodeJSON?lat=${lat}&lng=${lon}&username=komoza`;
     fetch(geonamesURL)
       .then((response) => response.json())
       .then((dataCountry) => {
         setCountry(dataCountry.countryName);
+        setActive(true);
       });
   };
 
-  const [modalActive, setActive] = useState(false);
   const closeModal = () => {
     setActive(false);
+    setPreloader(false);
     setCountry("");
+    setTips(null);
   };
 
-  const Modal = (active, setActive) => {
+  const Modal = () => {
     if (!weatherData) {
       return null;
     }
@@ -106,7 +160,8 @@ function App() {
 
   return (
     <div className="App">
-      <div className={`container ${modalActive ? "blur" : ""}`}>
+      <div className="container">
+        {showPreloader()}
         {searchComponent()}
         {modalActive && (
           <Modal

@@ -6,10 +6,6 @@
   font-family: "Poppins", sans-serif;
 }
 
-.blur {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
 .App {
   background-color: #1ABAFA;
 }
@@ -55,6 +51,27 @@
 .search__text {
   text-align: center;
   color: #fff;
+}
+.search-box {
+  display: flex;
+  flex-direction: column;
+}
+.search__option {
+  list-style: none;
+  background-color: #fff;
+  color: #555;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+.search__option:last-child {
+  border-radius: 0 0 15px 15px;
+}
+.search__option:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.--top-border {
+  border-radius: 15px 15px 0 0;
 }
 
 .modal {
