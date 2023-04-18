@@ -90,7 +90,6 @@
   width: 700px;
   height: 700px;
   border-radius: 20px;
-  background-image: url("./image/rain.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -137,4 +136,64 @@
   position: absolute;
   top: 15px;
   right: 15px;
+}
+
+.--Rain {
+  background-image: url("./image/rain.jpg");
+}
+
+.--Clouds {
+  background-image: url("./image/clouds.jpg");
+}
+
+.--Snow {
+  background-image: url("./image/snow.jpg");
+}
+
+.--Thunderstorm {
+  background-image: url("./image/thunderstorm.jpg");
+}
+
+.--Drizzle {
+  background-image: url("./image/drizzle.jpg");
+}
+
+.--Mist {
+  background-image: url("./image/mist.jpg");
+}
+
+.--Smoke {
+  background-image: url("./image/smoke.jpg");
+}
+
+.--Haze {
+  background-image: url("./image/haze.jpg");
+}
+
+.--Dust {
+  background-image: url("./image/dust.jpg");
+}
+
+.--Fog {
+  background-image: url("./image/fog.jpg");
+}
+
+.--Sand {
+  background-image: url("./image/sand.jpg");
+}
+
+.--Ash {
+  background-image: url("./image/ash.jpg");
+}
+
+.--Squall {
+  background-image: url("./image/squall.jpg");
+}
+
+.--Tornado {
+  background-image: url("./image/tornado.jpg");
+}
+
+.--Clear {
+  background-image: url("./image/clear.jpg");
 }/*# sourceMappingURL=App.css.map */

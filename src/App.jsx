@@ -49,7 +49,7 @@ function App() {
   const handleInputKeyUp = debounce((event) => {
     const town = event.target.value;
     if (event.code === "Enter" && town !== "") {
-      setPreloader(true)
+      setPreloader(true);
       const url = `http://api.openweathermap.org/geo/1.0/direct?q=${town}&limit=5&appid=cf47b4e8a7ac7b9a03be3f7e94b5d2b3`;
 
       fetch(url)
@@ -134,7 +134,9 @@ function App() {
             alt="close"
           />
         </div>
-        <div className="weather">
+        <div
+          className={`weather --${weatherData.weather[0].main}`}
+        >
           <div className="weather__top">
             <div className="weather__date">
               <div className="weather__time">{now.format("h:mm A")}</div>
